@@ -1,13 +1,23 @@
 <template>
-  <div class="max-w-3xl mx-auto p-8">
-    <NuxtLink
-      :to="`/repos/${encodeURIComponent($route.params.repo)}`"
-      class="inline-block mb-4"
-    >
-      Back
-    </NuxtLink>
+  <div class="max-w-3xl mx-auto p-8 prose">
+    <div class="flex justify-between items-center mb-4">
+      <NuxtLink
+        :to="`/repos/${encodeURIComponent($route.params.repo)}`"
+        class="inline-block"
+      >
+        Back
+      </NuxtLink>
+
+      <a
+        @click="copyPrompt"
+        class="text-blue-600 hover:text-blue-800 cursor-pointer"
+      >
+        Copy Prompt
+      </a>
+    </div>
 
     <template v-if="issue">
+      <h2 class="text-xl font-semibold mb-4">Issue</h2>
       <div class="border border-gray-200 p-4 mb-4 rounded-lg">
         <h1 class="text-2xl font-bold">{{ issue?.title }}</h1>
 
@@ -48,22 +58,20 @@
 <script setup lang="ts">
 import markdownit from "markdown-it";
 import hljs from "highlight.js";
+import "highlight.js/styles/github.css";
+import { createPrompt } from "~~/server/utils/createPrompt";
 
 const route = useRoute();
 const md = markdownit({
   highlight: function (str: string, lang: string) {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        return (
-          '<pre class="hljs"><code>' +
-          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
-          "</code></pre>"
-        );
+        return `<pre><code class="hljs language-${lang}">${
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
+        }</code></pre>`;
       } catch (__) {}
     }
-    return (
-      '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + "</code></pre>"
-    );
+    return `<pre><code class="hljs">${md.utils.escapeHtml(str)}</code></pre>`;
   },
 });
 
@@ -110,6 +118,17 @@ async function loadSolution() {
   } else {
     await loadStreamedSolution();
   }
+}
+
+async function copyPrompt() {
+  const repo = await $fetch("/api/repo/getRepo", {
+    method: "POST",
+    body: { repo: route.params.repo },
+  });
+
+  const prompt = createPrompt(issue.value.title, issue.value.body, repo);
+  console.log("prompt", prompt);
+  navigator.clipboard.writeText(prompt);
 }
 
 async function loadStreamedSolution() {
@@ -209,10 +228,17 @@ watch(
   /* Code blocks */
   :deep(pre) {
     margin: 16px 0;
-    padding: 16px;
-    overflow: auto;
+    padding: 0;
     background-color: #f6f8fa;
     border-radius: 6px;
+
+    code.hljs {
+      display: block;
+      padding: 16px;
+      overflow-x: auto;
+      color: #24292e;
+      background-color: #f6f8fa;
+    }
   }
 
   :deep(code) {
@@ -221,6 +247,7 @@ watch(
     font-size: 85%;
     background-color: rgba(27, 31, 35, 0.05);
     border-radius: 6px;
+    color: #24292e; /* Darker text color for better contrast */
   }
 
   /* Blockquotes */

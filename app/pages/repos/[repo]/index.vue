@@ -1,11 +1,8 @@
 <template>
-  <div class="max-w-3xl mx-auto p-8">
-    <NuxtLink :to="'/'" > Back </NuxtLink>
+  <div class="max-w-3xl mx-auto p-8 prose">
+    <NuxtLink :to="'/'"> Back </NuxtLink>
 
-    <div class="flex">
-      <h1>Issues for {{ $route.params.repo }}</h1>
-      cached
-    </div>
+    <h1>Issues for {{ $route.params.repo }}</h1>
 
     <div v-if="pending">Loading issues...</div>
 

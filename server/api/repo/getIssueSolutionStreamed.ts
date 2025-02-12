@@ -1,8 +1,9 @@
-import { generateText, streamText } from "ai";
+import { streamText } from "ai";
 import { getGithubIssues } from "../../utils/getGithubIssues";
 import { useAi } from "~~/server/utils/ai";
 import { getRepo } from "~~/server/utils/getRepo";
 import { repos } from "~~/shared/repos";
+import { getIssueSolutionKey } from "~~/server/utils/getIssueSolutionKey";
 
 export default defineEventHandler(
   // export default defineEventHandler(
@@ -35,8 +36,19 @@ export default defineEventHandler(
     const issueBody = targetIssue.body || "No description provided";
     const issueTitle = targetIssue.title || "Untitled Issue";
 
-    await useStorage().setItem(
-      `issue-solution:${repo}:${issueNumber}`,
+    const kv = hubKV();
+    const existingSolution = await kv.getItem(
+      getIssueSolutionKey(repo, issueNumber)
+    );
+    if (existingSolution != null) {
+      throw createError({
+        statusCode: 409,
+        message: "Solution already exists",
+      });
+    }
+
+    await kv.setItem(
+      getIssueSolutionKey(repo, issueNumber),
       "in progress refresh after a few moments"
     );
 
@@ -44,27 +56,14 @@ export default defineEventHandler(
 
     const result = await streamText({
       model: ai("gemini-2.0-flash"),
-      prompt: [
-        `I'm trying to solve this GitHub issue:\n\n`,
-        `<issue>\n`,
-        `Title: ${issueTitle}\n\n`,
-        `Description:\n${issueBody}\n\n`,
-        `</issue>\n`,
-        `\n`,
-        `Here is the whole repo as context so you can help me solve this issue:\n`,
-        `<repo>\n`,
-        `${repoText}\n`,
-        `</repo>`,
-      ].join(""),
+      prompt: createPrompt(issueTitle, issueBody, repoText),
       async onFinish(e) {
-        console.log('finished')
-        await useStorage().setItem(
-          `issue-solution:${repo}:${issueNumber}`,
-          e.text
-        );
+        await kv.setItem(getIssueSolutionKey(repo, issueNumber), e.text, {
+          // ttl: 60 * 60 * 24 * 7,
+        });
       },
     });
 
     return result.toTextStreamResponse();
-  },
+  }
 );

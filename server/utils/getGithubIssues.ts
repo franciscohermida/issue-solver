@@ -19,7 +19,7 @@ export const getGithubIssues = defineCachedFunction(
     return issues;
   },
   {
-    maxAge: 60 * 60 * 24, // 60s * 60 min * 24 hours = 1 day
+    // maxAge: 60 * 60 * 24 * 7, 
     getKey: (repoFullName: string) => `github-issues:${repoFullName}`,
   }
 );

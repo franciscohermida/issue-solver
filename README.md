@@ -1,60 +1,63 @@
-# Hello Edge
+# Issue Solver
 
-A minimal [Nuxt](https://nuxt.com) starter deployed on the Edge using [NuxtHub](https://hub.nuxt.com).
+Issue Solver is a proof-of-concept that uses AI to generate starting points for addressing GitHub issues. Instead of each developer duplicating efforts to develop their own AI workflows, this project provides a central place to define configurations that results in AI-generated initial issue references for your repository.
 
-https://hello.nuxt.dev
+> **Important:**  
+> The generated AI start points are **not** intended to be copied and pasted as final contributions. They serve only as initial references to reduce friction and stimulate ideas. Using them as-is can burden maintainers with low-quality pull requests.
 
-<a href="https://hello.nuxt.dev">
-<img src="https://github.com/nuxt-hub/hello-edge/assets/904724/99d1bd54-ef7e-4ac9-83ad-0a290f85edcf" alt="Hello World template for NuxtHub" />
-</a>
+---
 
-## Features
+## How It Works
 
-- Server-Side rendering on Cloudflare Workers
-- ESLint setup
-- Ready to add a database, blob and KV storage
-- One click deploy on 275+ locations for free
+- **Repository Context Extraction:**  
+  The tool scrapes the entire repository (code, docs, etc.) and inlines this data into an AI prompt alongside the issue description.
+- **AI Engine:**  
+  Uses Gemini Flash 2.0 for its cost-effectiveness, free tier, and a context window of 1 million tokens (2 million tokens in the pro version).
+- **Caching:**  
+  Ideally AI solutions for each issue are cached until a new workflow version or project release prompts an update. Projects can configure caching strategies based on their needs and budget.
+- **Deploy for free:**  
+  This project uses nuxthub which deploys to cloudflare for free. Make it available to your team and collaborate on solving issues at scale.
 
-## Setup
+---
 
-Make sure to install the dependencies with [pnpm](https://pnpm.io/installation#using-corepack):
+## Use Case Example: Tresjs
 
-```bash
-pnpm install
-```
+Tresjs is a Vue project wrapping Three.js. Currently, Issue Solver only loads the project's own repository context. Referencing R3F for additional inspiration is planned for a future update.
 
-You can update the main text displayed by creating a `.env`:
+---
 
-```bash
-NUXT_PUBLIC_HELLO_TEXT="Hello my world!"
-```
+## TODO
 
-## Development Server
+- Write a real prompt.
+- Integrate external references (e.g., R3F) as additional context for inspiration.
+- Add support for loading private repositories for local use with personal Gemini Flash 2.0 credits.
 
-Start the development server on `http://localhost:3000`:
+---
 
-```bash
-pnpm dev
-```
+## Getting Started
 
-## Production
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/franciscohermida/issue-solver.git
+   cd issue-solver
+   ```
+2. **Install Dependencies:**  
+   pnpm i.
+3. **Configure:**  
+   Customize the prompt workflows for your repository.
+4. **Run the Tool:**
+   ```bash
+   pnpm dev
+   ```
 
-Build the application for production:
+---
 
-```bash
-pnpm build
-```
+## Contributing
 
-## Deploy
+Contributions are welcome. Please open an issue or submit a pull request with improvements or bug fixes.
 
+---
 
-Deploy the application on the Edge with [NuxtHub](https://hub.nuxt.com) on your Cloudflare account:
+## License
 
-```bash
-npx nuxthub deploy
-```
-
-Then checkout your server logs, analaytics and more in the [NuxtHub Admin](https://admin.hub.nuxt.com).
-
-You can also deploy using [Cloudflare Pages CI](https://hub.nuxt.com/docs/getting-started/deploy#cloudflare-pages-ci).
-
+This project is licensed under the MIT License.

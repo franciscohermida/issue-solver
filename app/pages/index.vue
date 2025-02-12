@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-3xl mx-auto p-8">
+  <div class="prose max-w-3xl mx-auto p-8">
     <h1>Issue Solver</h1>
     <div class="mt-8 space-y-4">
       <div 

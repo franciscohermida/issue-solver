@@ -5,7 +5,7 @@ export const getRepo = defineCachedFunction(
     return data;
   },
   {
-    maxAge: 60 * 60,
+    // maxAge: 60 * 60 * 24 * 7,
     getKey: (repo: string) => repo,
   }
 );

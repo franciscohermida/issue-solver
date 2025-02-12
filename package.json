@@ -16,7 +16,6 @@
     "@ai-sdk/vue": "^1.1.12",
     "@nuxt/eslint": "^0.7.5",
     "@nuxthub/core": "^0.8.11",
-    "@nuxtjs/mdc": "0.13.5",
     "@nuxtjs/tailwindcss": "6.13.1",
     "ai": "^4.1.34",
     "highlight.js": "^11.11.1",
@@ -32,7 +31,6 @@
     "@nuxt/eslint-config": "^0.7.5",
     "@tailwindcss/typography": "^0.5.16",
     "eslint": "^9.18.0",
-    "shiki": "^2.3.2",
     "typescript": "^5.7.3",
     "vue-tsc": "^2.2.0",
     "wrangler": "^3.101.0"
